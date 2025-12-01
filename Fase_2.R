@@ -139,10 +139,116 @@ df_final<- df_final %>%
     )
   )
 
-a_2 <- rpart(edad_quinquenal ~ .,
+a_2 <- rpart(edad_quinquenal ~ depto_boleta 
+             + muni_boleta 
+             + mes_boleta 
+             + ano_boleta 
+             + falta_inf 
+             + sexo_inf 
+             + grupo_etnico_inf
+             + est_conyugal_inf 
+             + nacimiento_inf 
+             + cond_alfabetismo_inf
+             + niv_escolaridad_inf 
+             + est_ebriedad_inf 
+             + area_geo_inf 
+             + depto_nacimiento_inf 
+             + nacionalidad_inf 
+             + g_edad_60ymas
+             + subg_principales
+             + gran_grupos 
+             + g_primarios,
              data = df_final, method = "class"
 )
 
-rpart.plot(a_1, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
-           main="Tipo de falta", cex = 0.5)
+rpart.plot(a_2, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
+           main="grupo etario", cex = 0.5)
+
+### predecir el nivel de escolaridad
+
+a_3 <- rpart(niv_escolaridad_inf ~ depto_boleta
+             + muni_boleta 
+             + mes_boleta 
+             + ano_boleta 
+             + falta_inf 
+             + sexo_inf 
+             + grupo_etnico_inf
+             + est_conyugal_inf 
+             + nacimiento_inf 
+             + edad_quinquenal
+             + est_ebriedad_inf 
+             + area_geo_inf 
+   #          + depto_nacimiento_inf 
+             + g_edad_60ymas
+             + subg_principales
+             + gran_grupos 
+             + g_primarios,
+             data = df_final, method = "class"
+)
+
+rpart.plot(a_3, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
+           main="grupo etario", cex = 0.5)
+
+## se va a quitar analfabetimos para que no este sesgado ya que hay relacion entre nivel educativo. nacionalidad tambien porque 
+#la mayoria son guatemaltecos
+
+nodos <- a_3$frame
+impureza_promedio <- sum(nodos$dev) / sum(nodos$n)
+impureza_promedio
+
+library(entropy)
+
+library(entropy)
+
+library(entropy)
+
+# Obtener nodos hoja
+leaf_nodes <- row.names(a_3$frame)[a_3$frame$var == "<leaf>"]
+
+# Extraer probabilidades 
+entropias <- sapply(leaf_nodes, function(node) {
+  probs <- a_3$frame$yprob[[node]]
+  entropy(probs, unit = "log2")
+})
+
+entropias
+mean(entropias)
+
+bestcp <- a_3$cptable[which.min(a_3$cptable[,"xerror"]), "CP"]
+a_3_podado <- prune(a_3, cp = bestcp)
+a_3_podado
+
+summary(a_3)
+entropias
+mean(entropias)
+
+
+plot(a_3)
+text(a_3, pretty = 0)
+
+nrow(a_3$frame[a_3$frame$var == "<leaf>", ])
+
+### prediccion del area 
+
+a_4<- rpart(est_ebriedad_inf ~ depto_boleta
+             + muni_boleta 
+             + mes_boleta 
+             + ano_boleta 
+             + falta_inf 
+             + sexo_inf 
+             + niv_escolaridad_inf
+             + grupo_etnico_inf
+             + est_conyugal_inf 
+             + nacimiento_inf 
+             + edad_quinquenal
+             + area_geo_inf 
+             + g_edad_60ymas
+             + subg_principales
+             + gran_grupos 
+             + g_primarios,
+             data = df_final, method = "class"
+)
+
+rpart.plot(a_4, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
+           main="grupo etario", cex = 0.5)
 
