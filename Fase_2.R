@@ -4,10 +4,11 @@ library(dplyr)
 library(arules)
 library(rpart)
 library(rpart.plot)
+library(randomForest)
 
 
-ruta<- "C:/Users/rodri/OneDrive/Documentos/Maestria/Cuarto_trimestre/Mineria de datos/Proyecto_Fase_2/datasets"
-#ruta<- "C:/Users/rhernandez/OneDrive - Generando Soluciones Anlalíticas S.A/Documents/New folder/Proyecto_Fase_2/datasets"
+#ruta<- "C:/Users/rodri/OneDrive/Documentos/Maestria/Cuarto_trimestre/Mineria de datos/Proyecto_Fase_2/datasets"
+ruta<- "C:/Users/rhernandez/OneDrive - Generando Soluciones Anlalíticas S.A/Documents/New folder/Proyecto_Fase_2/datasets"
 
 archivos<- list.files(path = ruta, pattern = "\\.xlsx$", full.names = TRUE)
 
@@ -55,7 +56,6 @@ for (i in anios) {
 df_final <- bind_rows(mget(paste0("df_", anios)))
 df_final<- df_final[, setdiff(names(df_final), "num_corre")]
 df_final$area_geo_inf<- as.numeric(df_final$area_geo_inf)
-
 
 ### arboles de decision
 ## medicion de entropia
@@ -371,6 +371,163 @@ result <- predict(a_4, persona_a_4_2, type = "prob")
 result<- max(as.numeric(unlist(result)))
 result
 
+####### Random Forest  1 ####### 
+set.seed(42)
+info_rf <- df_final[sample(1:nrow(df_final)),]
+index <- sample(1:nrow(info_rf),0.8*nrow(info_rf))
+
+train <- info_rf[index,]
+test <- info_rf[-index,]
+
+train$falta_inf <- as.factor(train$falta_inf)
+
+rf_1 <- randomForest(
+  falta_inf ~ 
+    depto_boleta
+  + mes_boleta 
+  + ano_boleta 
+  + sexo_inf 
+  + edad_inf 
+  + grupo_etnico_inf
+  + est_conyugal_inf
+  + cond_alfabetismo_inf 
+  + niv_escolaridad_inf
+  + est_ebriedad_inf 
+  + area_geo_inf
+  + subg_principales
+  + gran_grupos 
+  + g_primarios,
+  data = train,
+  ntree = 100, 
+  mtry = 5,
+  na.action = na.roughfix
+)
+
+prueba <- predict(rf_1, test)
+prueba
+
+matriz <- table(test$falta_inf, prueba)
+matriz
+
+pre <- sum(diag(matriz))/sum(matriz)
+pre
+
+plot(rf_1)
+
+#caso 1 
+persona_rf_1_1 <- data.frame(
+  depto_boleta = 1,
+  mes_boleta = 7,
+  ano_boleta = 2023,
+  sexo_inf = 1,
+  edad_inf = 28,
+  grupo_etnico_inf = 1,
+  est_conyugal_inf = 1,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 3,
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1,
+  subg_principales = 5223,  
+  gran_grupos = 5,
+  g_primarios = 0
+)
+
+predict(rf_1, persona_rf_1_1, type = "prob")
+
+
+#caso 2
+
+persona_rf_1_2 <- data.frame(
+  depto_boleta = 8,
+  mes_boleta = 5,
+  ano_boleta = 2022,
+  sexo_inf = 1,
+  edad_inf = 42,
+  grupo_etnico_inf = 2,
+  est_conyugal_inf = 2,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 2,
+  est_ebriedad_inf = 2,
+  area_geo_inf = 1,
+  subg_principales = 6111,  
+  gran_grupos = 6,
+  g_primarios = 1
+)
+
+predict(rf_1, persona_rf_1_2, type = "prob")
+
+####### Random Forest  2 ####### 
+set.seed(42)
+info_rf_2 <- df_final[sample(1:nrow(df_final)),]
+index <- sample(1:nrow(info_rf_2),0.8*nrow(info_rf_2))
+
+train <- info_rf_2[index,]
+test <- info_rf_2[-index,]
+
+train$sexo_inf <- as.factor(train$sexo_inf)
+
+rf_2 <- randomForest(
+  sexo_inf ~ 
+    depto_boleta
+  + mes_boleta 
+  + edad_inf 
+  + grupo_etnico_inf
+  + est_conyugal_inf
+  + cond_alfabetismo_inf 
+  + niv_escolaridad_inf
+  + est_ebriedad_inf 
+  + area_geo_inf,
+  data = train,
+  ntree = 100, 
+  mtry = 5,
+  na.action = na.roughfix
+)
+
+prueba <- predict(rf_2, test)
+prueba
+
+matriz <- table(test$sexo_inf, prueba)
+matriz
+
+pre <- sum(diag(matriz))/sum(matriz)
+pre
+
+plot(rf_2)
+
+## caso 1
+
+persona_rf_2_1 <- data.frame(
+  depto_boleta = 1,
+  mes_boleta = 6,
+  edad_inf = 27,
+  grupo_etnico_inf = 1,
+  est_conyugal_inf = 1,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 3,
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1
+)
+
+predict(rf_2, persona_rf_2_1, type = "prob")
+
+
+## caso 2
+persona_rf_2_2 <- data.frame(
+  depto_boleta = 8,
+  mes_boleta = 9,
+  edad_inf = 38,
+  grupo_etnico_inf = 2,
+  est_conyugal_inf = 2,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 2,
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1
+)
+
+predict(rf_2, persona_rf_2_2, type = "prob")
+
+
+##########
 
 nodos <- a_3$frame
 impureza_promedio <- sum(nodos$dev) / sum(nodos$n)
