@@ -89,7 +89,7 @@ resultados <- sapply(vars, function(v) {
 
 sort(resultados, decreasing = TRUE)
 
-## predecir si es una falta contra las buenas costumbres
+####### arbol 1 predecir si es una falta contra las buenas costumbres #####
 
 #df_a_1$falta_inf<- ifelse(df_final$falta_inf == 3, 1,0) #3 es falta contra las buenas constumbres, probar esto en otra pc
  
@@ -157,8 +157,7 @@ result
 ### como la mayoria de faltas son contra las buenas constumbres por eso es el valor predominante. 
 
 
-#### prediccion de grupo etario
-
+####### arbol 2 predecir grupo etario#####
 
 df_final<- df_final %>%
   mutate(
@@ -172,26 +171,16 @@ df_final<- df_final %>%
   )
 
 a_2 <- rpart(edad_quinquenal ~ depto_boleta 
-             + muni_boleta 
              + mes_boleta 
-             + ano_boleta 
              + falta_inf 
+             + est_conyugal_inf
              + sexo_inf 
              + grupo_etnico_inf
-             + est_conyugal_inf 
-             + nacimiento_inf 
              + cond_alfabetismo_inf
              + niv_escolaridad_inf 
              + est_ebriedad_inf 
-             + area_geo_inf 
-             + depto_nacimiento_inf 
-             + nacionalidad_inf 
-             + g_edad_60ymas
-             + subg_principales
-             + gran_grupos 
-             + g_primarios,
-             data = df_final, method = "class"
-)
+             + area_geo_inf,
+             data = df_final, method = "class")
 
 rpart.plot(a_2, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
            main="grupo etario", cex = 0.5)
