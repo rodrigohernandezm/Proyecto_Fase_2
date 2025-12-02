@@ -5,7 +5,9 @@ library(arules)
 library(rpart)
 library(rpart.plot)
 
-ruta<- "C:/Users/rodri/OneDrive/Documentos/Maestria/Cuarto_trimestre/Mineria de datos/Proyecto_Fase_2/datasets"
+
+#ruta<- "C:/Users/rodri/OneDrive/Documentos/Maestria/Cuarto_trimestre/Mineria de datos/Proyecto_Fase_2/datasets"
+ruta<- "C:/Users/rhernandez/OneDrive - Generando Soluciones Anlalíticas S.A/Documents/New folder/Proyecto_Fase_2/datasets"
 
 archivos<- list.files(path = ruta, pattern = "\\.xlsx$", full.names = TRUE)
 
@@ -97,7 +99,7 @@ rpart.plot(a_1, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palet
            main="Tipo de falta", cex = 0.5)
 
 
-persona <- data.frame(
+persona_a_1_1 <- data.frame(
   depto_boleta = 1,
   muni_boleta = 1,
   mes_boleta = 6,
@@ -120,7 +122,7 @@ persona <- data.frame(
   g_primarios = 1
 )
 
-result <- predict(a_1, persona, type = "prob")
+result <- predict(a_1, persona_a_1_1, type = "prob")
 result<- max(as.numeric(unlist(result)))
 result
 
