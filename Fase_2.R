@@ -91,7 +91,7 @@ sort(resultados, decreasing = TRUE)
 
 ## predecir si es una falta contra las buenas costumbres
 
-df_a_1$falta_inf<- ifelse(df_final$falta_inf == 3, 1,0) #3 es falta contra las buenas constumbres, probar esto en otra pc
+#df_a_1$falta_inf<- ifelse(df_final$falta_inf == 3, 1,0) #3 es falta contra las buenas constumbres, probar esto en otra pc
  
 a_1 <- rpart(falta_inf ~ depto_boleta + muni_boleta + mes_boleta + ano_boleta + sexo_inf + edad_inf + 
                grupo_etnico_inf + est_conyugal_inf + nacimiento_inf + cond_alfabetismo_inf + niv_escolaridad_inf 
@@ -100,25 +100,24 @@ a_1 <- rpart(falta_inf ~ depto_boleta + muni_boleta + mes_boleta + ano_boleta + 
 
 rpart.plot(a_1, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
            main="Tipo de falta", cex = 0.5)
-
-
+#caso1 (yo)
 persona_a_1_1 <- data.frame(
   depto_boleta = 1,
-  muni_boleta = 1,
+  muni_boleta = 108,
   mes_boleta = 6,
   ano_boleta = 2023,
   sexo_inf = 1,                   
-  edad_inf = 30,
-  grupo_etnico_inf = 1,
+  edad_inf = 29,
+  grupo_etnico_inf = 2,
   est_conyugal_inf = 1,
   nacimiento_inf = 1,             
   cond_alfabetismo_inf = 1,       
-  niv_escolaridad_inf = 4,        
+  niv_escolaridad_inf = 5,        
   est_ebriedad_inf = 1,          
   area_geo_inf = 1,               
   depto_nacimiento_inf = 1,
-  subg_principales = 1,
-  gran_grupos = 1,
+  subg_principales = 2141,
+  gran_grupos = 21,
   g_primarios = 1
 )
 
@@ -126,33 +125,36 @@ result <- predict(a_1, persona_a_1_1, type = "prob")
 result<- max(as.numeric(unlist(result)))
 result
 
+## caso 2 
+#Don José es un hombre de 65 años, vive en un área rural. Tiene bajo nivel educativo y un estado conyugal
+#distinto, lo cual lo lleva a otro nodo del árbol. Se encontraba sobrio.
 
 persona_a_1_2 <- data.frame(
-  depto_boleta = 1,
-  muni_boleta = 1,
-  mes_boleta = 6,
-  ano_boleta = 2023,
+  depto_boleta = 3,
+  muni_boleta = 301,
+  mes_boleta = 11,
+  ano_boleta = 2021,
   sexo_inf = 1,
-  edad_inf = 30,
-  grupo_etnico_inf = 1,
-  est_conyugal_inf = 1,
-  nacimiento_inf = 1,
+  edad_inf = 65,
+  grupo_etnico_inf = 2,
+  est_conyugal_inf = 8,
+  nacimiento_inf = 501,
   cond_alfabetismo_inf = 1,
-  niv_escolaridad_inf = 4,
+  niv_escolaridad_inf = 1,
   est_ebriedad_inf = 1,
-  area_geo_inf = 1,
-  depto_nacimiento_inf = 1,
-  nacionalidad_inf = 1,
-  g_edad_80ymas = 0,
-  g_edad_60ymas = 0,
-  subg_principales = 20,
-  gran_grupos = 5,
-  g_primarios = 1
-)
+  area_geo_inf = 2,
+  depto_nacimiento_inf = 3,
+  subg_principales = 120,
+  gran_grupos = 10,
+  g_primarios = 1)
 
 result <- predict(a_1, persona_a_1_2, type = "prob")
 result<- max(as.numeric(unlist(result)))
 result
+
+
+### tiene los mismos valores siendo perfiles totalmente diferentes, esto quiere decir que se complementa con el analisis de la fase 1
+### como la mayoria de faltas son contra las buenas constumbres por eso es el valor predominante. 
 
 
 #### prediccion de grupo etario
