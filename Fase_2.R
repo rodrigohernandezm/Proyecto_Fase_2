@@ -6,8 +6,8 @@ library(rpart)
 library(rpart.plot)
 
 
-#ruta<- "C:/Users/rodri/OneDrive/Documentos/Maestria/Cuarto_trimestre/Mineria de datos/Proyecto_Fase_2/datasets"
-ruta<- "C:/Users/rhernandez/OneDrive - Generando Soluciones Anlalíticas S.A/Documents/New folder/Proyecto_Fase_2/datasets"
+ruta<- "C:/Users/rodri/OneDrive/Documentos/Maestria/Cuarto_trimestre/Mineria de datos/Proyecto_Fase_2/datasets"
+#ruta<- "C:/Users/rhernandez/OneDrive - Generando Soluciones Anlalíticas S.A/Documents/New folder/Proyecto_Fase_2/datasets"
 
 archivos<- list.files(path = ruta, pattern = "\\.xlsx$", full.names = TRUE)
 
@@ -170,9 +170,12 @@ df_final<- df_final %>%
     )
   )
 
+df_final$edad_quinquenal <- factor(df_final$edad_quinquenal)
+
 a_2 <- rpart(edad_quinquenal ~ depto_boleta 
              + mes_boleta 
              + falta_inf 
+             + ano_boleta  
              + est_conyugal_inf
              + sexo_inf 
              + grupo_etnico_inf
@@ -184,6 +187,26 @@ a_2 <- rpart(edad_quinquenal ~ depto_boleta
 
 rpart.plot(a_2, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
            main="grupo etario", cex = 0.5)
+
+#caso 1 
+persona_a_2_1 <- data.frame(
+  depto_boleta = 6,
+  mes_boleta = 4,
+  falta_inf = 2,
+  ano_boleta = 2023,
+  est_conyugal_inf = 1,
+  sexo_inf = 1,
+  grupo_etnico_inf = 2,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 4,
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1
+)
+
+result <- predict(a_2, persona_a_2_1, type = "prob")
+result<- max(as.numeric(unlist(result)))
+result
+
 
 ### predecir el nivel de escolaridad
 
