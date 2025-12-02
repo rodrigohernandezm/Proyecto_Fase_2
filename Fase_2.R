@@ -91,9 +91,12 @@ sort(resultados, decreasing = TRUE)
 
 ## predecir si es una falta contra las buenas costumbres
 
-a_1 <- rpart(falta_inf ~ .,
-               data = df_final, method = "class"
-)
+df_a_1$falta_inf<- ifelse(df_final$falta_inf == 3, 1,0) #3 es falta contra las buenas constumbres, probar esto en otra pc
+ 
+a_1 <- rpart(falta_inf ~ depto_boleta + muni_boleta + mes_boleta + ano_boleta + sexo_inf + edad_inf + 
+               grupo_etnico_inf + est_conyugal_inf + nacimiento_inf + cond_alfabetismo_inf + niv_escolaridad_inf 
+             + est_ebriedad_inf + area_geo_inf + depto_nacimiento_inf + subg_principales + gran_grupos + g_primarios
+              ,data = df_final, method = "class")
 
 rpart.plot(a_1, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
            main="Tipo de falta", cex = 0.5)
@@ -104,25 +107,50 @@ persona_a_1_1 <- data.frame(
   muni_boleta = 1,
   mes_boleta = 6,
   ano_boleta = 2023,
-  sexo_inf = 1,                   # 1 = hombre
+  sexo_inf = 1,                   
   edad_inf = 30,
   grupo_etnico_inf = 1,
   est_conyugal_inf = 1,
-  nacimiento_inf = 1,             # 1 = nacido en GT 
-  cond_alfabetismo_inf = 1,       # 1 = sabe leer/escribir
-  niv_escolaridad_inf = 4,        # código escolaridad 
-  est_ebriedad_inf = 1,           # 1 = sobrio
-  area_geo_inf = 1,               # urbano/rural según tu codificación
+  nacimiento_inf = 1,             
+  cond_alfabetismo_inf = 1,       
+  niv_escolaridad_inf = 4,        
+  est_ebriedad_inf = 1,          
+  area_geo_inf = 1,               
   depto_nacimiento_inf = 1,
-  nacionalidad_inf = 1,
-  g_edad_80ymas = 0,
-  g_edad_60ymas = 0,
   subg_principales = 1,
   gran_grupos = 1,
   g_primarios = 1
 )
 
 result <- predict(a_1, persona_a_1_1, type = "prob")
+result<- max(as.numeric(unlist(result)))
+result
+
+
+persona_a_1_2 <- data.frame(
+  depto_boleta = 1,
+  muni_boleta = 1,
+  mes_boleta = 6,
+  ano_boleta = 2023,
+  sexo_inf = 1,
+  edad_inf = 30,
+  grupo_etnico_inf = 1,
+  est_conyugal_inf = 1,
+  nacimiento_inf = 1,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 4,
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1,
+  depto_nacimiento_inf = 1,
+  nacionalidad_inf = 1,
+  g_edad_80ymas = 0,
+  g_edad_60ymas = 0,
+  subg_principales = 20,
+  gran_grupos = 5,
+  g_primarios = 1
+)
+
+result <- predict(a_1, persona_a_1_2, type = "prob")
 result<- max(as.numeric(unlist(result)))
 result
 
