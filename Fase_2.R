@@ -207,8 +207,27 @@ result <- predict(a_2, persona_a_2_1, type = "prob")
 result<- max(as.numeric(unlist(result)))
 result
 
+#caso 2
 
-### predecir el nivel de escolaridad
+persona_a_2_2 <- data.frame(
+  depto_boleta = 9,
+  mes_boleta = 9,
+  falta_inf = 4,
+  ano_boleta = 2022,
+  est_conyugal_inf = 2,
+  sexo_inf = 2,
+  grupo_etnico_inf = 1,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 2,
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1
+)
+
+result <- predict(a_2, persona_a_2_2, type = "prob")
+result<- max(as.numeric(unlist(result)))
+result
+
+####### arbol 3 predecir el nivel de escolaridad ####### 
 
 a_3 <- rpart(niv_escolaridad_inf ~ depto_boleta
              + muni_boleta 
@@ -218,11 +237,10 @@ a_3 <- rpart(niv_escolaridad_inf ~ depto_boleta
              + sexo_inf 
              + grupo_etnico_inf
              + est_conyugal_inf 
-             + nacimiento_inf 
              + edad_quinquenal
              + est_ebriedad_inf 
              + area_geo_inf 
-   #          + depto_nacimiento_inf 
+             + depto_nacimiento_inf 
              + g_edad_60ymas
              + subg_principales
              + gran_grupos 
@@ -235,6 +253,124 @@ rpart.plot(a_3, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palet
 
 ## se va a quitar analfabetimos para que no este sesgado ya que hay relacion entre nivel educativo. nacionalidad tambien porque 
 #la mayoria son guatemaltecos
+
+
+#caso 1
+
+persona_a_3_1<- data.frame(
+  depto_boleta = 9,
+  muni_boleta = 905,
+  mes_boleta = 7,
+  ano_boleta = 2023,
+  falta_inf = 3,
+  sexo_inf = 1,
+  grupo_etnico_inf = 1,
+  est_conyugal_inf = 1,
+  edad_quinquenal = "30-34",
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1,
+  depto_nacimiento_inf = 9,
+  g_edad_60ymas = 0,
+  subg_principales = 6111,   
+  gran_grupos = 6,           
+  g_primarios = 1 )        
+
+
+result <- predict(a_3, persona_a_3_1, type = "prob")
+result<- max(as.numeric(unlist(result)))
+result
+
+
+#caso 2
+
+persona_a_3_2<- data.frame(
+  depto_boleta = 9,
+  muni_boleta = 905,
+  mes_boleta = 7,
+  ano_boleta = 2023,
+  falta_inf = 3,
+  sexo_inf = 1,
+  grupo_etnico_inf = 1,
+  est_conyugal_inf = 1,
+  edad_quinquenal = "30-34",
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1,
+  depto_nacimiento_inf = 9,
+  g_edad_60ymas = 0,
+  subg_principales = 2211 ,
+  gran_grupos = 2,           
+  g_primarios = 0)  
+
+result <- predict(a_3, persona_a_3_2, type = "prob")
+result<- max(as.numeric(unlist(result)))
+result
+
+####### arbol 4 predecir año de la falta ####### 
+
+
+df_final$ano_boleta <- as.factor(df_final$ano_boleta)
+
+a_4 <- rpart(ano_boleta ~ 
+             + depto_boleta 
+             + mes_boleta 
+             + sexo_inf 
+             + falta_inf
+             + edad_inf 
+             + est_conyugal_inf 
+             + est_ebriedad_inf
+             + area_geo_inf
+             + subg_principales 
+             + gran_grupos 
+             + g_primarios,
+             data = df_final,
+             method = "class"
+)
+
+rpart.plot(a_4, type = 2, extra=0, under = TRUE, fallen.leaves = TRUE, box.palette = "BuGn",
+           main="Año de la falta", cex = 0.5)
+
+
+#caso 1
+persona_a_4_1 <- data.frame(
+  depto_boleta = 9,
+  mes_boleta = 9,
+  sexo_inf = 1,
+  falta_inf = 3,
+  edad_inf = 30,
+  est_conyugal_inf = 1,
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1,
+  subg_principales = 5230,   
+  gran_grupos = 5,           
+  g_primarios = 5200         
+)
+
+
+result <- predict(a_4, persona_a_4_1, type = "prob")
+result<- max(as.numeric(unlist(result)))
+result
+
+#caso 2
+
+
+persona_a_4_2 <- data.frame(
+  depto_boleta = 8,
+  mes_boleta = 6,
+  sexo_inf = 1,
+  falta_inf = 1,
+  edad_inf = 45,
+  est_conyugal_inf = 2,
+  est_ebriedad_inf = 1,
+  area_geo_inf = 1,
+  subg_principales = 6111,   
+  gran_grupos = 6,           
+  g_primarios = 6110         
+)
+
+result <- predict(a_4, persona_a_4_2, type = "prob")
+result<- max(as.numeric(unlist(result)))
+result
+
 
 nodos <- a_3$frame
 impureza_promedio <- sum(nodos$dev) / sum(nodos$n)
