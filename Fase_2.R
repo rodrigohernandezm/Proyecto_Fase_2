@@ -526,6 +526,76 @@ persona_rf_2_2 <- data.frame(
 
 predict(rf_2, persona_rf_2_2, type = "prob")
 
+####### Random Forest  3 ####### 
+
+set.seed(42)
+info_rf_3 <- df_final[sample(1:nrow(df_final)),]
+index <- sample(1:nrow(info_rf_3),0.8*nrow(info_rf_3))
+
+train <- info_rf_3[index,]
+test <- info_rf_3[-index,]
+
+train$area_geo_inf <- as.factor(train$area_geo_inf)
+
+rf_3 <- randomForest(
+  area_geo_inf ~ 
+    depto_boleta +
+    sexo_inf +
+    edad_inf +
+    grupo_etnico_inf +
+    est_conyugal_inf +
+    cond_alfabetismo_inf +
+    niv_escolaridad_inf +
+    falta_inf +
+    est_ebriedad_inf,
+    data = train,
+    ntree = 100, 
+    mtry = 5,
+    na.action = na.roughfix
+)
+
+prueba <- predict(rf_3, test)
+prueba
+
+matriz <- table(test$sexo_inf, prueba)
+matriz
+
+pre <- sum(diag(matriz))/sum(matriz)
+pre
+
+plot(rf_3)
+
+## caso 1
+
+persona_rf_3_1 <- data.frame(
+  depto_boleta = 9,
+  sexo_inf = 1,
+  edad_inf = 42,
+  grupo_etnico_inf = 2,
+  est_conyugal_inf = 2,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 1,
+  falta_inf = 5,
+  est_ebriedad_inf = 2
+)
+
+predict(rf_3, persona_rf_3_1, type="prob")
+
+## caso 2
+persona_rf_3_2<- data.frame(
+  depto_boleta = 9,
+  sexo_inf = 2,
+  edad_inf = 42,
+  grupo_etnico_inf = 2,
+  est_conyugal_inf = 2,
+  cond_alfabetismo_inf = 1,
+  niv_escolaridad_inf = 1,
+  falta_inf = 5,
+  est_ebriedad_inf = 2
+)
+
+predict(rf_3, persona_rf_3_2, type = "prob")
+
 
 ##########
 
