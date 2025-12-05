@@ -5,8 +5,6 @@ Esta fase lleva el proyecto de faltas judiciales un paso adelante: a partir del 
 - **R (`Fase_2.R`)**: árboles de decisión con `rpart` y ensambles **Random Forest** para distintos objetivos.
 - **Python (`redes_neuronales.ipynb`)**: redes neuronales densas en TensorFlow/Keras para clasificación multiclase y binaria.
 
-Todo está documentado para que cualquier ingeniero pueda clonar el repositorio, instalar las dependencias y reproducir los resultados (métricas, matrices de confusión y gráficas exportadas).
-
 ---
 
 ## 📁 Estructura del proyecto
@@ -27,8 +25,6 @@ Todo está documentado para que cualquier ingeniero pueda clonar el repositorio,
 ├── random_forest_*.png        # Gráficas e importancias de los bosques aleatorios
 └── red_neuronal_*.png         # Curvas y matrices de las redes neuronales
 ```
-
-> ℹ️ Los PNG presentes son ejemplos generados al correr los modelos. Puede regenerarlos ejecutando los scripts/notebooks con soporte gráfico.
 
 ---
 
@@ -66,11 +62,9 @@ Probado en **Windows, macOS y Linux**. Ajuste las rutas según su entorno.
 ## 📥 Clonar el repositorio
 
 ```bash
-git clone <URL_DEL_REPO_FASE_2>
+git clone https://github.com/rodrigohernandezm/Proyecto_Fase_2
 cd Proyecto_Fase_2
 ```
-
-Reemplace `<URL_DEL_REPO_FASE_2>` por la URL real (HTTPS o SSH).
 
 ---
 
