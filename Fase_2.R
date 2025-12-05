@@ -89,10 +89,8 @@ resultados <- sapply(vars, function(v) {
 
 sort(resultados, decreasing = TRUE)
 
-####### arbol 1 predecir si es una falta contra las buenas costumbres #####
+####### arbol 1 #####
 
-#df_a_1$falta_inf<- ifelse(df_final$falta_inf == 3, 1,0) #3 es falta contra las buenas constumbres, probar esto en otra pc
- 
 a_1 <- rpart(falta_inf ~ depto_boleta + muni_boleta + mes_boleta + ano_boleta + sexo_inf + edad_inf + 
                grupo_etnico_inf + est_conyugal_inf + nacimiento_inf + cond_alfabetismo_inf + niv_escolaridad_inf 
              + est_ebriedad_inf + area_geo_inf + depto_nacimiento_inf + subg_principales + gran_grupos + g_primarios
